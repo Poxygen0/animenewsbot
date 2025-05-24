@@ -16,7 +16,9 @@ from handlers.command_handlers import (
 )
 # from handlers.conversation_handlers import ()
 # from handlers.message_handlers import ()
+from utils.logger import setup_logger
 
+logger = setup_logger(__name__, "data/logs/main.log")
 
 def start_bot() -> None:
     defaults = Defaults(parse_mode=ParseMode.HTML)
@@ -32,4 +34,5 @@ def start_bot() -> None:
 
 
 if __name__ == "__main__":
+    logger.info("Bot started")
     start_bot()
