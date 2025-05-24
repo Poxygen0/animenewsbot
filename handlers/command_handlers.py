@@ -4,6 +4,10 @@ from telegram.constants import ParseMode, ChatAction, ChatType
 from telegram.ext import ContextTypes
 from utils.decorators import *
 
+from utils.logger import setup_logger
+
+logger = setup_logger(__name__, "./data/logs/handlers.log")
+
 
 @send_typing_action
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
