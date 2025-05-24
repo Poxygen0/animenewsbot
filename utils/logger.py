@@ -1,18 +1,14 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler
-
-# Global default settings
-DEFAULT_CONSOLE = True
-DEFAULT_MAX_BYTES = 5 * 1024 * 1024  # 5 MB
-DEFAULT_BACKUP_COUNT = 3
+from config import (LOG_TO_CONSOLE, LOG_MAX_BYTES, LOG_BACKUP_COUNT)
 
 def setup_logger(
     name: str,
     log_file: str,
-    console: bool = DEFAULT_CONSOLE,
-    max_bytes: int = DEFAULT_MAX_BYTES,
-    backup_count: int = DEFAULT_BACKUP_COUNT
+    console: bool = LOG_TO_CONSOLE,
+    max_bytes: int = LOG_MAX_BYTES,
+    backup_count: int = LOG_BACKUP_COUNT
 ) -> logging.Logger:
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
