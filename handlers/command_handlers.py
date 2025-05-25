@@ -3,6 +3,7 @@ from telegram import (Update,)
 from telegram.constants import ParseMode, ChatAction, ChatType
 from telegram.ext import ContextTypes
 from utils.decorators import *
+from const import HELP_MESSAGE
 
 from utils.logger import setup_logger
 
@@ -27,3 +28,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     await update.message.reply_text(welcome_message)
     return
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a message when the command /help is issued."""
+    await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.HTML)

@@ -12,6 +12,7 @@ from telegram.ext import (
     MessageHandler,
 )
 from handlers.command_handlers import (
+    help_command,
     start,
 )
 from handlers.conversation_handlers import (
@@ -43,6 +44,7 @@ def start_bot() -> None:
     
     # commands
     app.add_handler(CommandHandler('start', start))
+    app.add_handler(CommandHandler('help', help))
     # conversation handlers
     app.add_handler(conv_handler_feedback)
     
