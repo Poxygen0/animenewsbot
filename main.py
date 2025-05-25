@@ -14,7 +14,12 @@ from telegram.ext import (
 from handlers.command_handlers import (
     start,
 )
-# from handlers.conversation_handlers import ()
+from handlers.conversation_handlers import (
+    feedback,
+    received_feedback,
+    cancel,
+    FEEDBACK
+)
 # from handlers.message_handlers import ()
 from utils.logger import setup_logger
 
@@ -27,8 +32,19 @@ def start_bot() -> None:
            .defaults(defaults)
            .build())
     
+    # Add Conversation Handlers here
+    conv_handler_feedback = ConversationHandler(
+        entry_points=[CommandHandler('feedback', feedback)],
+        states={
+            FEEDBACK: [MessageHandler(filters.TEXT & ~filters.COMMAND, received_feedback)]
+        },
+        fallbacks=[CommandHandler("cancel", cancel)]
+    )
     
+    # commands
     app.add_handler(CommandHandler('start', start))
+    # conversation handlers
+    app.add_handler(conv_handler_feedback)
     
     app.run_polling(allowed_updates=Update.ALL_TYPES, timeout=60)
 
