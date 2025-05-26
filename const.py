@@ -4,7 +4,8 @@ HELP_MESSAGE = """
 /start - Start the bot
 /help - Display a help menu with available commands
 /settings - Manage your settings
-/feedback - Send feedback directly to the admin.
+/feedback - Send feedback directly to the admin
+/cancel - Cancel current operation
 """
 ADMIN_MENU: str = """
 🤖 <b>Admin Menu</b>
