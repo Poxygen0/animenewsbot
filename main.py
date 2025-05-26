@@ -44,7 +44,7 @@ def start_bot() -> None:
     
     # commands
     app.add_handler(CommandHandler('start', start))
-    app.add_handler(CommandHandler('help', help))
+    app.add_handler(CommandHandler('help', help_command))
     # conversation handlers
     app.add_handler(conv_handler_feedback)
     
