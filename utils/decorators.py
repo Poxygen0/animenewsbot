@@ -1,6 +1,9 @@
 from functools import wraps
 from config import ADMIN_ID
 from telegram.constants import ChatAction
+from utils.logger import setup_logger
+
+logger = setup_logger(__name__, "./data/logs/utils.log")
 
 def send_action(action):
     """Sends `action` while processing func command.
@@ -42,7 +45,7 @@ def restricted(func):
         if user_id not in ADMIN_ID:
             msg = f"Unauthorized access denied for {user_id}."
             msg_fmt = f"Unauthorized access denied to cmd:{func.__name__} for <code>{user_id}</code>."
-            print(msg)
+            logger.info(msg)
             await context.bot.send_message(chat_id=ADMIN_ID[0], text=msg_fmt)
             await update.message.reply_text("You are not authorized to use this command!")
             return
