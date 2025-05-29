@@ -13,6 +13,7 @@ from telegram.ext import (
 )
 from handlers.command_handlers import (
     help_command,
+    news,
     start,
 )
 from handlers.conversation_handlers import (
@@ -45,6 +46,7 @@ def start_bot() -> None:
     # commands
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('help', help_command))
+    app.add_handler(CommandHandler('news', news))
     # conversation handlers
     app.add_handler(conv_handler_feedback)
     
