@@ -14,3 +14,4 @@ ADMIN_MENU: str = """
 /status - Check the current status of the bot
 /broadcast - broadcast message to all users
 """
+MAL_NEWS_URL = "https://myanimelist.net/news"
