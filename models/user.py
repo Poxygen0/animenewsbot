@@ -28,7 +28,7 @@ class UserSettings(Base):
     __tablename__ = "user_settings"
     
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), primary_key=True, nullable=False)
-    interval: Mapped[int] = mapped_column(default=2) # hours
+    interval: Mapped[int] = mapped_column(default=0) # hours
     notifications_disabled: Mapped[Optional[bool]] = mapped_column(default=False)
     
     user: Mapped["User"] = relationship("User", back_populates="settings")
