@@ -1,7 +1,12 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler
-from config import (LOG_TO_CONSOLE, LOG_MAX_BYTES, LOG_BACKUP_COUNT, NOISY_LOGGERS, DEBUG)
+from config import (
+    LOG_TO_CONSOLE, LOG_MAX_BYTES, LOG_BACKUP_COUNT,
+    NOISY_LOGGERS, DEBUG
+)
+
+THIRD_PARTY_LOG_PATH = "./data/logs/third_party.log"
 
 def setup_logger(
     name: str,
@@ -11,13 +16,16 @@ def setup_logger(
     backup_count: int = LOG_BACKUP_COUNT
 ) -> logging.Logger:
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    os.makedirs(os.path.dirname(THIRD_PARTY_LOG_PATH), exist_ok=True)
 
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
 
     if not logger.handlers:
-        # File handler
-        file_handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count, encoding='utf-8')
+        # File handler (main log)
+        file_handler = RotatingFileHandler(
+            log_file, maxBytes=max_bytes, backupCount=backup_count, encoding='utf-8'
+        )
         file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         file_handler.setFormatter(file_format)
         logger.addHandler(file_handler)
@@ -26,24 +34,31 @@ def setup_logger(
         if console:
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.INFO)
-            console_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-            console_handler.setFormatter(console_format)
+            console_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
             logger.addHandler(console_handler)
 
-    # Silence or redirect noisy libraries
-    for noisy in NOISY_LOGGERS:
-        noisy_logger = logging.getLogger(noisy)
-        if DEBUG:
-            # Log noisy libraries to separate file
+    # Setup shared handler for noisy logs (only once)
+    if DEBUG:
+        shared_noisy_logger = logging.getLogger("third_party")
+        if not shared_noisy_logger.handlers:
             noisy_handler = RotatingFileHandler(
-                "./data/logs/third_party.log", maxBytes=max_bytes, backupCount=backup_count, encoding="utf-8"
+                THIRD_PARTY_LOG_PATH,
+                maxBytes=max_bytes,
+                backupCount=backup_count,
+                encoding="utf-8"
             )
-            noisy_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            noisy_handler.setFormatter(noisy_format)
-            noisy_logger.addHandler(noisy_handler)
-            noisy_logger.setLevel(logging.DEBUG)
-        else:
-            # Silence them in production
-            noisy_logger.setLevel(logging.WARNING)
+            noisy_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+            shared_noisy_logger.addHandler(noisy_handler)
+            shared_noisy_logger.setLevel(logging.DEBUG)
+
+        for noisy_name in NOISY_LOGGERS:
+            noisy = logging.getLogger(noisy_name)
+            noisy.handlers = []
+            noisy.setLevel(logging.DEBUG)
+            noisy.propagate = True  # Forward to "third_party"
+
+    else:
+        for noisy_name in NOISY_LOGGERS:
+            logging.getLogger(noisy_name).setLevel(logging.WARNING)
 
     return logger
