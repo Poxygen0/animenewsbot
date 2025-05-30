@@ -52,5 +52,5 @@ def extract_news_articles(page_html: str) -> List[Dict[str, Optional[str]]]:
             'date': date_str,
             'image_url': image_url
         })
-    logger.info(f"Done extracting all articles for: {page_html}")
+    logger.info("Done extracting all articles for MAL site")
     return articles
