@@ -1,4 +1,5 @@
 import asyncio
+import os
 from telegram import (Update,)
 from telegram.constants import ParseMode, ChatAction, ChatType
 from telegram.ext import ContextTypes
@@ -135,4 +136,18 @@ async def stop_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     except Exception as e:
         logger.exception(f"An error occured while stopping schedule: {e}")
 
+@restricted
+@send_typing_action
+async def log_preview_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    log_path = "./data/logs/handlers.log"
+    if not os.path.exists(log_path):
+        await update.message.reply_text("No log file found.")
+        return
+
+    with open(log_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()[-40:]  # Tail last 40 lines
+
+    log_text = "".join(lines)
+    await update.message.reply_text(f"📄 Recent logs:\n\n<pre>{log_text}</pre>")
+    return
 
