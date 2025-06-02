@@ -15,6 +15,7 @@ from handlers.command_handlers import (
     help_command,
     news,
     start,
+    start_schedule,
 )
 from handlers.conversation_handlers import (
     feedback,
@@ -47,6 +48,7 @@ def start_bot() -> None:
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('help', help_command))
     app.add_handler(CommandHandler('news', news))
+    app.add_handler(CommandHandler('start_schedule', start_schedule))
     # conversation handlers
     app.add_handler(conv_handler_feedback)
     

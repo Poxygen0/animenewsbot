@@ -61,3 +61,66 @@ async def news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("Couldn't load the news right now. Try again later.")
     return
 
+# Admin Commands
+
+def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    """Remove job with given name. Returns whether job was removed."""
+    current_jobs = context.job_queue.get_jobs_by_name(name)
+    if not current_jobs:
+        return False
+    for job in current_jobs:
+        job.schedule_removal()
+    return True
+
+async def update_news_articles(context: ContextTypes.DEFAULT_TYPE) -> None:
+    ''' Initialize the fetching and caching of new news article at n interval '''
+    logger.info("Fetching news article...")
+    job = context.job
+    chat_id = job.data['chat_id']
+    try:
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        msg_to_edit = await context.bot.send_message(chat_id=chat_id, text="Fetching feed...")
+        html_page = fetch_news_page(MAL_NEWS_URL)
+        articles = extract_news_articles(html_page)
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        msg_to_edit = await msg_to_edit.edit_text(text="Done")
+        await asyncio.sleep(1)
+        
+        with SessionLocal() as session:
+            await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+            msg_to_edit = await msg_to_edit.edit_text(text="Caching articles...")
+            await asyncio.sleep(1)
+            news_count = NewsCache.cache_articles(session, articles, max_cache=90)
+        msg = f"✅ {news_count} new article(s) cached."
+        logger.info(msg)
+        await msg_to_edit.edit_text(msg)
+    except Exception as e:
+        logger.exception(f"Error whilst fetching or caching news articles: {e}")
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+        await context.bot.send_message(chat_id=chat_id, text=f"An error occurred: {e}")
+    return
+
+@restricted
+@send_typing_action
+async def start_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id
+    try:
+        # Cancel existing job if any
+        job_removed = remove_job_if_exists(str(chat_id), context)
+        
+        # Schedule the job to fetch feeds
+        interval_in_seconds = 5 * 60
+        job_data = {
+            "chat_id": chat_id,
+            }
+        context.job_queue.run_repeating(update_news_articles, interval_in_seconds , chat_id=chat_id, name=str(chat_id), data=job_data)
+        
+        text = f"News article fetching scheduled every {interval_in_seconds/60:.2f} mins from now."
+        if job_removed:
+            text += "Previous schedule was canceled."
+        await update.effective_message.reply_text(text)
+    except Exception as e:
+        logger.exception(f"An error occurred while starting schedule: {e}")
+        await update.effective_message.reply_text("An error occurred while starting the schedule. Please try again.")
+
+
