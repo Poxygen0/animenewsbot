@@ -16,6 +16,7 @@ from handlers.command_handlers import (
     news,
     start,
     start_schedule,
+    stop_schedule,
 )
 from handlers.conversation_handlers import (
     feedback,

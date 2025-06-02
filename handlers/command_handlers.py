@@ -123,4 +123,16 @@ async def start_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         logger.exception(f"An error occurred while starting schedule: {e}")
         await update.effective_message.reply_text("An error occurred while starting the schedule. Please try again.")
 
+@restricted
+@send_typing_action
+async def stop_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Remove the job if the user changed their mind."""
+    chat_id = update.message.chat_id
+    try:
+        job_removed = remove_job_if_exists(str(chat_id), context)
+        text = "Timer successfully cancelled!" if job_removed else "You have no active timer."
+        await update.message.reply_text(text)
+    except Exception as e:
+        logger.exception(f"An error occured while stopping schedule: {e}")
+
 
