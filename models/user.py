@@ -39,6 +39,15 @@ class UserSettings(Base):
         return session.query(cls).filter_by(user_id=user_id).first()
     
     @classmethod
+    def create_or_get_user_settings(cls, session, user_id: int):
+        user_settings = session.query(cls).filter_by(user_id=user_id).first()
+        if not user_settings:
+            user_settings = cls(user_id=user_id)  # default OFF notifications
+            session.add(user_settings)
+            session.commit()
+        return user_settings
+    
+    @classmethod
     def update_user_settings(cls, session, user_id: int,
                              interval: Optional[int] = None,
                              notifications: bool = None,
