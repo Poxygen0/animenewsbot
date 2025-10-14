@@ -34,6 +34,11 @@ class UserSettings(Base):
     user: Mapped["User"] = relationship("User", back_populates="settings")
     
     @classmethod
+    def get_user_settings(cls, session, user_id: int) -> Optional["UserSettings"]:
+        """ Class method to get the notification info """
+        return session.query(cls).filter_by(user_id=user_id).first()
+    
+    @classmethod
     def update_user_settings(cls, session, user_id: int,
                              interval: Optional[int] = None,
                              notifications: bool = None,
