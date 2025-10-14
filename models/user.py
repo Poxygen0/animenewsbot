@@ -15,7 +15,6 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(nullable=True)
     last_name: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(nullable=True)
-    is_subscribed: Mapped[bool] = mapped_column(default=False)
     rate_tier: Mapped[str] = mapped_column(default="free")  # "free", "premium"
     filters: Mapped[dict] = mapped_column(JSON, default={})
     joined_at: Mapped[Optional[datetime]] = mapped_column(DateTime, default=func.now())
@@ -30,7 +29,8 @@ class UserSettings(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), primary_key=True, nullable=False)
     interval: Mapped[int] = mapped_column(default=0) # hours
     notifications_disabled: Mapped[Optional[bool]] = mapped_column(default=False)
-    
+    is_subscribed: Mapped[bool] = mapped_column(default=False)
+
     user: Mapped["User"] = relationship("User", back_populates="settings")
 
 
