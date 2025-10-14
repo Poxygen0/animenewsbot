@@ -62,7 +62,94 @@ async def news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("Couldn't load the news right now. Try again later.")
     return
 
-# Admin Commands
+####################
+#   User Settings  #
+####################
+
+async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    ''' Subscribe to receive news on an interval basis '''
+    user = update.effective_user
+    with SessionLocal() as session:
+        try:
+            user_settings = UserSettings.get_user_settings(session, user.id)
+            
+            # Check if notifications are already muted
+            if user_settings is not None and user_settings.is_subscribed:
+                await update.effective_message.reply_text("You are already subscribed.")
+                return
+            user_settings.update_user_settings(session, user_id=user.id, subscribed=True)
+            await update.effective_message.reply_text("You will now receive scheduled updates.\nTo unsubscribe use: /unsubscribe.")
+            return
+        except Exception as e:
+            logger.exception(f"Error during subscription: {str(e)}")
+            await update.effective_message.reply_text("An error occurred on our side while subscribing.")
+            return
+
+async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    ''' Unsubscribe to stop news update schedule '''
+    user = update.effective_user
+    with SessionLocal() as session:
+        try:
+            user_settings = UserSettings.get_user_settings(session, user.id)
+            
+            # Check if notifications are already muted
+            if user_settings is not None and not user_settings.is_subscribed:
+                await update.effective_message.reply_text("You are already not subscribed.")
+                return
+            user_settings.update_user_settings(session, user_id=user.id, subscribed=False)
+            await update.effective_message.reply_text("You will stop receiving scheduled updates from now.")
+            return
+        except Exception as e:
+            logger.exception(f"Error during subscription: {str(e)}")
+            await update.effective_message.reply_text("An error occurred on our side while subscribing.")
+            return
+
+async def toggle_notifications(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    with SessionLocal() as session:
+        try:
+            # Check for arguments
+            if len(context.args) == 0:
+                # If no argument, get current setting
+                user_settings = UserSettings.create_or_get_user_settings(session, user.id)
+                new_setting = not user_settings.notifications_disabled # Toggle the current state
+                if UserSettings.update_notifications_disabled(session ,user_id=user.id, notification_in=new_setting):
+                    status_message = "Notifications are now turned OFF." if new_setting else "Notifications are now turned ON."
+                    await update.effective_message.reply_text(status_message)
+                else:
+                    await update.effective_message.reply_text("Failed to update your notification settings.")
+                return
+            
+            # Ensure user has sent exactly one expected valid argument ('on' or 'off')
+            if len(context.args) != 1:
+                await update.effective_message.reply_text(
+                    "Usage: /togglenotifications <on | off> or /togglenotifications",
+                    parse_mode=ParseMode.MARKDOWN)
+                return
+
+            new_notification = str(context.args[0]).lower()
+            if new_notification not in ("on", "off"):
+                await update.effective_message.reply_text("Please specify either 'on' or 'off' for notifications.")
+                return
+
+            # Convert input to boolean
+            notification_setting = new_notification == "off"
+            # Store the new interval (can be stored in the database or in-memory)
+            if UserSettings.update_notifications_disabled(session, user_id=user.id, notification_in=notification_setting):
+                # Inform the user about the update
+                await update.effective_message.reply_text(f"Notifications are now {'muted' if notification_setting else 'enabled'}.")
+            else:
+                await update.effective_message.reply_text("Failed to update your notification settings.")
+            return
+
+        except Exception as e:
+            logger.exception(f"Error during toggle_notifications: {str(e)}")
+            await update.message.reply_text("An error occurred while updating your notification settings.")
+            return
+
+####################
+#  Admin Commands  #
+####################
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Remove job with given name. Returns whether job was removed."""

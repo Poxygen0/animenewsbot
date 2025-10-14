@@ -18,6 +18,9 @@ from handlers.command_handlers import (
     start,
     start_schedule,
     stop_schedule,
+    subscribe,
+    unsubscribe,
+    toggle_notifications,
 )
 from handlers.conversation_handlers import (
     feedback,
@@ -53,6 +56,9 @@ def start_bot() -> None:
     app.add_handler(CommandHandler('news', news))
     app.add_handler(CommandHandler('start_schedule', start_schedule))
     app.add_handler(CommandHandler('stop_schedule', stop_schedule))
+    app.add_handler(CommandHandler('togglenotifications', toggle_notifications))
+    app.add_handler(CommandHandler('subscribe', subscribe))
+    app.add_handler(CommandHandler('unsubscribe', unsubscribe))
     # conversation handlers
     app.add_handler(conv_handler_feedback)
     
