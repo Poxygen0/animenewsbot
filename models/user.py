@@ -32,6 +32,29 @@ class UserSettings(Base):
     is_subscribed: Mapped[bool] = mapped_column(default=False)
 
     user: Mapped["User"] = relationship("User", back_populates="settings")
+    
+    @classmethod
+    def update_user_settings(cls, session, user_id: int,
+                             interval: Optional[int] = None,
+                             notifications: bool = None,
+                             subscribed: bool = None) -> None:
+        user_settings = session.query(cls).filter_by(user_id=user_id).first()
+        if user_settings:
+            # Update existing settings
+            if interval is not None:
+                user_settings.interval = interval
+            if notifications is not None:
+                user_settings.notifications_disabled = notifications
+            if subscribed is not None:
+                user_settings.is_subscribed = subscribed
+            
+            session.add(user_settings)  # Mark as modified
+        else:
+            # Create new settings
+            user_settings: UserSettings = cls(user_id=user_id, interval=interval, notifications_disabled=notifications, is_subscribed=subscribed)
+            session.add(user_settings)  # Add new settings
+        session.commit()
+        return
 
 
 class SubscriptionLog(Base):
