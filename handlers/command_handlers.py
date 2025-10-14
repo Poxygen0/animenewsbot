@@ -151,6 +151,21 @@ async def toggle_notifications(update: Update, context: ContextTypes.DEFAULT_TYP
 #  Admin Commands  #
 ####################
 
+@restricted
+@send_typing_action
+async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    with SessionLocal() as session:
+        try:
+            total_users: int = User.get_total_users(session=session)
+            await update.message.reply_text(f"<b>Status</b>\n<b>Users: </b>{total_users}")
+            return
+        except Exception as e:
+            logger.exception(f"There was an error fetching status: {e}")
+            await update.message.reply_text(f"There was an error fetching status: {e}")
+            return
+    # await update.message.reply_text("Not implemented yet.")
+
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Remove job with given name. Returns whether job was removed."""
     current_jobs = context.job_queue.get_jobs_by_name(name)
