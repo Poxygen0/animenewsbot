@@ -1,0 +1,59 @@
+# Configuration and cache files
+*.env
+*.bak
+*.swp
+
+# Storage files
+*.json
+*.db
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+*.env/
+*.venv/
+*env/
+*venv/
+
+# IDE and editor configurations
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.iml
+
+# Ignore all .log files and databases
+*.log
+*.sql
+*.sqlite
+
+# Operating system files
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Test results and coverage
+.pytest_cache/
+.coverage
+
+# Compiled files
+*.so
+*.pyd
+*.pyc
+*.pyo
+
+# Cython debug symbols
+cython_debug/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+.dmypy.json.*
