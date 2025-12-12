@@ -1,4 +1,4 @@
-HELP_MESSAGE = """
+HELP_MENU = """
 🤖 <b>Help Menu</b>
 
 /start - Start the bot
