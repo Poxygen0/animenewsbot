@@ -12,4 +12,11 @@ HELP_MESSAGE = """
 /feedback - Send feedback directly to the admin
 /cancel - Cancel current operation
 """
+ADMIN_MENU: str = """
+🤖 <b>Admin Menu</b>
+
+/admin_commands - This menu
+/status - Check the current status of the bot
+/broadcast - broadcast message to all users
+"""
 ERROR_MSG = "Oops🙊👀, seems there's an error on our side. Please try again."
