@@ -20,6 +20,14 @@ A simple Telegram bot that fetches the latest anime news and sends it to a chann
    pip3 install -r requirements.txt
    ```
 
+3. Create a .env file with the following variables:
+   ```env
+   BOT__TOKEN 
+   DATABASE__URL = "sqlite:///data/database/botdata.db"
+   BOT__OWNER_ID 
+   BOT__USERNAME 
+   BOT__LOG_CHANNEL_ID
+   ```
 ## Run the bot
 
 ```bash
