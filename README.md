@@ -13,3 +13,17 @@ A simple Telegram bot that fetches the latest anime news and sends it to a chann
    ```bash
    git clone https://github.com/Poxygen0/animenewsbot.git
    cd animenewsbot
+   ```
+
+2. Install dependencies in a preferred virtual env:
+   ```bash
+   pip3 install -r requirements.txt
+   ```
+
+## Run the bot
+
+```bash
+python main.py
+```
+
+### Pull Requests are welcomed
