@@ -49,6 +49,7 @@ class SettingsConfig(BaseModel):
     results_per_page: int = 10
     max_news: int = 50
     news_expiration_time: timedelta = timedelta(days=5)
+    interval_in_secs: int = 10 * 60 # Minutes
     mal_news_url: HttpUrl = "https://myanimelist.net/news"
     default_timezone: str = 'UTC'
 
