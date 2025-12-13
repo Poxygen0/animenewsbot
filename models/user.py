@@ -181,7 +181,7 @@ class Channel(Base):
         name (str): Name of the channel.
         username (str): Telegram username of the channel.
         added_by (int): ID of the user who added the channel.
-        created_at (datetime): Timestamp when the channel was added.
+        added_at (datetime): Timestamp when the channel was added.
     """
     __tablename__ = "channels"
     
