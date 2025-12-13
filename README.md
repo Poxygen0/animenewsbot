@@ -22,11 +22,11 @@ A simple Telegram bot that fetches the latest anime news and sends it to a chann
 
 3. Create a .env file with the following variables:
    ```env
-   BOT__TOKEN 
+   BOT__TOKEN = 'Your_token_here'
    DATABASE__URL = "sqlite:///data/database/botdata.db"
-   BOT__OWNER_ID 
-   BOT__USERNAME 
-   BOT__LOG_CHANNEL_ID
+   BOT__OWNER_ID = 'Your_user_id_here'
+   BOT__USERNAME = 'bot_username_here'
+   BOT__LOG_CHANNEL_ID = 'logs_channel_id'
    ```
 ## Run the bot
 
