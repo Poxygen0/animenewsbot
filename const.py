@@ -15,8 +15,19 @@ HELP_MENU = """
 ADMIN_MENU: str = """
 🤖 <b>Admin Menu</b>
 
-/admin_commands - This menu
-/status - Check the current status of the bot
-/broadcast - broadcast message to all users
+/skfj_admin_commands - This menu
+/skfj_start_schedule - Start the scheduling of fetching news
+/skfj_stop_schedule - Stop the scheduling of fetching news
+/skfj_status - Check the current status of the bot
+/skfj_broadcast - broadcast message to all users
+"""
+ADMIN_CHECK_FAILURE = """
+🛑 Action Required: Admin Permission Missing!
+
+I need to be an administrator in the channel with the following rights:
+
+•✅ Post Messages
+
+Please grant me these rights, then forward another message from your channel to continue.
 """
 ERROR_MSG = "Oops🙊👀, seems there's an error on our side. Please try again."
